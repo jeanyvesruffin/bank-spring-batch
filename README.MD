@@ -419,11 +419,38 @@ Nous mettons les dependences suivantes dans notre projet Spring Boot:
 
 ![new spring starter project dependencies](./images/new spring starter project dependencies.bmp)
 
-# Mise en place des ressources d'entree ici un fichier CSV
+## Mise en place des ressources d'entree ici un fichier CSV
 
-Dossier main/ressources, faire nouveau fchier data.csv.
+Dossier main/ressources, faire nouveau fchier data.csv et le completer.
 
+## Creation des objets metiers BankTransaction.java
 
+BankTransaction, package com.ruffin.bankspringbatch.dao. Annote @Entity
+@Data @ToString @NoArgsConstructor @AllArgsConstructor. Et des attributs annotes @Id qui defini l'id de l'objet unique et @Transient qui permet de ne pas rendre persistant cette donnee.
+
+## Creation de l'interface JPA Repository extends JpaRepository<BankTransaction, Long>
+
+BankTransactionRepository, package com.ruffin.bankspringbatch.dao.
+
+# Configuration Spring Batch
+
+## Creation configuration d'un Job SpringBatchConfig.java
+
+1 . SpringBatchConfig, package com.ruffin.bankspringbatch.configuration. Annote @Configuration et @EnableBatchProcessing.
+
+2 . Configuration du job.
+
+```java
+@Configuration
+@EnableBatchProcessing
+public class SpringBatchConfig {
+	private JobBuilderFactory jobBuilderFactory;
+	private StepBuilderFactory stepBuilderFactory;
+	private ItemReader<BankTransaction> bankTransactionItemReader;
+	private ItemWriter<BankTransaction> bankTransactionItemWriter;
+	private ItemProcessor<BankTransaction, BankTransaction> bankTransactionItemProcessor;
+}
+```
 
 
 
