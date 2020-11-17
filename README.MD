@@ -47,13 +47,13 @@ Un traitements par lots font partie de la plutart des projets informatiques et S
 Cette architecture en couches met en evidence 3 principaux composants de haut niveau:
 
 * Application:
- * Contient tous les traitements par lots et le code personnalise ecrits par les developpeurs a l'aide de Spring Batch
+	* Contient tous les traitements par lots et le code personnalise ecrits par les developpeurs a l'aide de Spring Batch
  
 * Batch Core:
- * Le noyau de lot contient les classes d'execution principales necessaires au lancement et au controle d'un traitement par lots. Il comprend des implementations pour **jobLauncher, Job et Step**
+	* Le noyau de lot contient les classes d'execution principales necessaires au lancement et au controle d'un traitement par lots. Il comprend des implementations pour **jobLauncher, Job et Step**
 
 * Batch infrastructure:
- * Application et Batch Core sont tous les deux construits sur une infrastructure commune. Cette infrastructure contient des **Readers, des Writers et des services de traitement courants**
+	* Application et Batch Core sont tous les deux construits sur une infrastructure commune. Cette infrastructure contient des **Readers, des Writers et des services de traitement courants**
  
 ## Concepts fondamentaux de Spring Batch
 
@@ -72,8 +72,8 @@ Un traitement par lots est generalement encapsule par:
  
 * Un job est une entite qui encapsule un  processus de traitement par lots complet.
 * Comme c'est le cas avec d'autre projets Spring, un Job est associe a:
- * Un fichier de configuration XML
- * Une classe configuration Java
+	* Un fichier de configuration XML
+	* Une classe configuration Java
 * Un **Job** est simplement un **conteneur** pour les instances **Step**.
 * A chaque job peut etre associe a plusieurs **JobInstances**, chacune etant definie d emaniere unique par ses **JobParameters** particuliers utilises pour demarrer un travail par lots.
 * Chaque execution d'un **JobInstance** est appelee **JobExecution**
@@ -81,21 +81,21 @@ Un traitement par lots est generalement encapsule par:
 
 # Step
 
-![Step spring batch](./images/step-0.png)
+![Step spring batch](./images/step_0.png)
  
 * Un **Step** est une phase specifique et independante d'un travail par lots, de sorte que chaque travail est compose d'une ou plusieurs etapes.
 
 * Chaque step utilise:
- * Un **ItemReader** permettant de lire et deserialiser les enregistrements du batch a partir d'une entree quelconque.
- * Un **ItemProcessor** permettant de ttraiter les items transmis ItemReader.
- * Un **ItemWriter** permettant d'ecrire les enregistrements traites par ItemProcessor dans une sortie quelconques.
+	* Un **ItemReader** permettant de lire et deserialiser les enregistrements du batch a partir d'une entree quelconque.
+	* Un **ItemProcessor** permettant de ttraiter les items transmis ItemReader.
+	* Un **ItemWriter** permettant d'ecrire les enregistrements traites par ItemProcessor dans une sortie quelconques.
  
 
 # StepConfiguration : Chunk Oriented Processing (Traitement oriente bloc)
 
 ![Step configuration spring batch](./images/step.png)
 
-[Step Configuration](https://docs.spring.io/spring-batch/docs/4.1.x/reference/html/step.html#configureStep)
+[Step Configuration sur Spring Doc References](https://docs.spring.io/spring-batch/docs/4.1.x/reference/html/step.html#configureStep)
 
 * Spring Batch utilise le modele "Chunk-oriented" processing.
 * Le traitement oriente par morceaux consiste a lire les donnees une par une et a creer des "morceaux" ecrits dans une transaction.
@@ -214,7 +214,7 @@ ItemReader est un moyen qui permet de fournir des donnees a partir d'une entree 
 * JSON file
 * Base de donnees
 
-````java
+```java
 public interface ItemReader<T> {
 	T read() <> throws Exception, UnexpectedInputException, ParseException, NonTransientResourceException;
 } 
