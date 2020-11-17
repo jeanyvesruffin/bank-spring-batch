@@ -257,7 +257,7 @@ Cette classe permet de valider les donnees de BankTransaction.
 
 Recoit un objet en entree et permet d'ecrire ces donnees a un endrois (base de donnees, fichier plat ...)
 
-````java
+```java
 public interface ItemWriter<T> {
 	void write(List<? extends T> items) throws Exception;
 } 
@@ -269,7 +269,7 @@ public interface ItemWriter<T> {
 
 Prend un objet en entre et retourne un objet en sortie.
 
-````java
+```java
 public interface ItemProcessor <I,O> {
 	o process(I item) throws Exception;
 } 
