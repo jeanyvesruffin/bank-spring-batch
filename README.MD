@@ -42,7 +42,7 @@ Un traitements par lots font partie de la plutart des projets informatiques et S
  
 ## Architrecture de spring batch
   
-[Architecture spring batch](archi-batch.png)
+![Architecture spring batch](./images/archi-batch.png)
  
 Cette architecture en couches met en evidence 3 principaux composants de haut niveau:
 
@@ -57,7 +57,7 @@ Cette architecture en couches met en evidence 3 principaux composants de haut ni
  
 ## Concepts fondamentaux de Spring Batch
 
-[Concepts spring batch](concepte.png)
+![Concepts spring batch](./images/concepte.png)
 
 Un traitement par lots est generalement encapsule par:
 
@@ -68,7 +68,7 @@ Un traitement par lots est generalement encapsule par:
 
 # Job
 
-[Job spring batch](job.png)
+![Job spring batch](./images/job.png)
  
 * Un job est une entite qui encapsule un  processus de traitement par lots complet.
 * Comme c'est le cas avec d'autre projets Spring, un Job est associe a:
@@ -81,7 +81,7 @@ Un traitement par lots est generalement encapsule par:
 
 # Step
 
-[Step spring batch](step-0.png)
+![Step spring batch](./images/step-0.png)
  
 * Un **Step** est une phase specifique et independante d'un travail par lots, de sorte que chaque travail est compose d'une ou plusieurs etapes.
 
@@ -93,7 +93,7 @@ Un traitement par lots est generalement encapsule par:
 
 # StepConfiguration : Chunk Oriented Processing (Traitement oriente bloc)
 
-[Step configuration spring batch](step.png)
+![Step configuration spring batch](./images/step.png)
 
 [Step Configuration](https://docs.spring.io/spring-batch/docs/4.1.x/reference/html/step.html#configureStep)
 
@@ -145,7 +145,7 @@ public Job job () {
 
 # Controle les flux des Steps
 
-[Sequential flow step](sequential-flow-step.jpg)
+![Sequential flow step](./images/sequential-flow-step.jpg)
 
 ```java
 @Bean
@@ -158,7 +158,7 @@ public Job job(){
 }
 ```
 
-[Conditional flow step](conditional-flow-step.jpg)
+![Conditional flow step](./images/conditional-flow-step.jpg)
 
 ```java
 @Bean
@@ -181,7 +181,7 @@ public Job job(){
 }
 ```
 
-[Split low : Flows in Parallel](flux-parallel.bmp)
+![Split low : Flows in Parallel](./images/flux-parallel.bmp)
 
 ```java
 @Bean
@@ -388,7 +388,6 @@ public CompositeItemProcessor compositeItemProcessor () {
 * Fournis des operations CRUD pour les instanciations JobLauncher, Job et Step.
 * Une fois qu'un Job est lance, une JobExecution est obtenue a partir du repository et, au cours de l'execution, les instances StepExecution et JobExecution sont conservees dans le repository.
 
-********************
 
 # Spring Batch Application
 
@@ -418,7 +417,7 @@ Nous mettons les dependences suivantes dans notre projet Spring Boot:
 * Spring Boot DevTools: permet de consulter le contenu de la base H2 a travail une IHM.
 * Spring Batch
 
-[new spring starter project dependencies](new spring starter project dependencies.bmp)
+![new spring starter project dependencies](./images/new spring starter project dependencies.bmp)
 
 
 
