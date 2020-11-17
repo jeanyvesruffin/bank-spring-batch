@@ -18,7 +18,7 @@ Un programme batch typique generalement:
 
 Un traitements par lots font partie de la plutart des projets informatiques et Spring Batch est l'un des rares framework open source offrant une solution robuste a ll'echelle de l'entreprisee.
 
-![Diagramme spring batch](/bank-spring-batch/images/diagram-batch.svg)
+![Diagramme spring batch](./bank-spring-batch/images/diagram-batch.svg)
 
 
 ## Cas utilisateurs cote metier (Uses case)
