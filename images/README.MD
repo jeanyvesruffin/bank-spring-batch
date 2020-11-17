@@ -18,10 +18,9 @@ Un programme batch typique generalement:
 
 Un traitements par lots font partie de la plutart des projets informatiques et Spring Batch est l'un des rares framework open source offrant une solution robuste a ll'echelle de l'entreprisee.
 
-![Diagramme spring batch](/bank-spring-batch/images/diagram-batch.svg)
+[Diagramme spring batch](diagram-batch.svg)
 
-
-## Cas utilisateurs cote metier (Uses case)
+## Cas utilisateurs cote metier (Uses caes)
 
 * A la fin de chaque mois, une entreprise doit envoyer les virements des salaires des employes dans leurs comptes respectifs.
 * Le traitement des bulletins de salaire a la fin du mois.
