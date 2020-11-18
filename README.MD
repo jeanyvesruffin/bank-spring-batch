@@ -436,26 +436,89 @@ BankTransactionRepository, package com.ruffin.bankspringbatch.dao.
 
 ## Creation configuration d'un Job SpringBatchConfig.java
 
-1 . SpringBatchConfig, package com.ruffin.bankspringbatch.configuration. Annote @Configuration et @EnableBatchProcessing.
+1 . Creation de la classe **SpringBatchConfig**, package com.ruffin.bankspringbatch.configuration. Annote @Configuration et @EnableBatchProcessing.
 
-2 . Configuration du job.
+2 . **Configuration du job.**
 
 ```java
 @Configuration
 @EnableBatchProcessing
 public class SpringBatchConfig {
+	@Autowired
 	private JobBuilderFactory jobBuilderFactory;
+	@Autowired
 	private StepBuilderFactory stepBuilderFactory;
+	@Autowired
 	private ItemReader<BankTransaction> bankTransactionItemReader;
+	@Autowired
 	private ItemWriter<BankTransaction> bankTransactionItemWriter;
+	@Autowired
 	private ItemProcessor<BankTransaction, BankTransaction> bankTransactionItemProcessor;
+
 }
 ```
 
+3 . **Defnition de la methode retournant un job.**
+
+```java
+public Job bankJob() {
+	Step step1 = stepBuilderFactory.get("step-load-data")
+			.<BankTransaction,BankTransaction>chunk(100)
+			.reader(bankTransactionItemReader)
+			.processor(bankTransactionItemProcessor)
+			.writer(bankTransactionItemWriter)
+			.build();
+			
+	return jobBuilderFactory.get("bank-data-load-job")
+			.start(step1)
+			.build();
+};
+```
+
+4 . **Definition des objets ItemReader** que l'on defini avec des Bean. Ici FlatFileItemReader sera utilise pour notre fichier plat (csv).
+
+Nous passerons en parametre de la methode FlatFileItemReader le path du fichier csv, afin de ne pas le mettre en dure dans le code nous mettrons le path dans le fichier de configuration application.properties.
+
+application.properties
+
+```properties
+inputFile=classpath:/data.csv
+```
+
+Puis nous annoterons le parametre @Value("${inputFile}")Resource inputFile , avec Resource issu du pâckage Spring et non javax. On sautera (skip) la 1er ligne qui est l'entete du fichier csv.
+
+```java
+@Bean
+public FlatFileItemReader<BankTransaction> fileItemReader(@Value("${inputFile}") Resource inputFile) {
+	FlatFileItemReader<BankTransaction> fileItemReader = new FlatFileItemReader<>();
+	fileItemReader.setName("FFIR1");
+	fileItemReader.setLinesToSkip(1);
+	fileItemReader.setResource(inputFile);
+	fileItemReader.setLineMapper(lineMapper());
+	return fileItemReader;
+}
+```
+
+Puis definir la methode lineMapper(), qui definira la structure de noptre fichier plat (csv) entete, separateur .... Il est important de garder l'ordre des champs d'entete lors de leur affectation lors du setNames(). Remarque que l'on ne met pas les champs @Transient qui ne doivent pas etre pris e compte sur le mapping de la base de donnees.
 
 
+```java
+@Bean
+public LineMapper<BankTransaction> lineMapper() {
+	DefaultLineMapper<BankTransaction> lineMapper = new DefaultLineMapper<>();
+	DelimitedLineTokenizer delimitedLineTokenizer = new DelimitedLineTokenizer();
+	delimitedLineTokenizer.setDelimiter(",");
+	delimitedLineTokenizer.setStrict(false);
+	delimitedLineTokenizer.setNames("id","accountID","strTransactionDate","transactionType","amount");
+	lineMapper.setLineTokenizer(delimitedLineTokenizer);
+	BeanWrapperFieldSetMapper<BankTransaction> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
+	fieldSetMapper.setTargetType(BankTransaction.class);
+	lineMapper.setFieldSetMapper(fieldSetMapper);
+	return lineMapper;
+}
+```
 
-
+5 . **Definition des objets ItemProcessor**
 
 
 
