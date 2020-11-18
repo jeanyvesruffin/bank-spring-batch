@@ -418,7 +418,7 @@ Nous mettons les dependences suivantes dans notre projet Spring Boot:
 * Spring Batch
 
 
-![new spring starter project dependencies](./images/new spring starter project dependencies.bmp)
+![new spring starter project dependencies](./images/new_spring_starter_project_dependencies.bmp)
 
 ![test](./images/new spring starter project dependencies.bmp)
 
