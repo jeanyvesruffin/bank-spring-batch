@@ -417,11 +417,14 @@ Nous mettons les dependences suivantes dans notre projet Spring Boot:
 * Spring Boot DevTools: permet de consulter le contenu de la base H2 a travail une IHM.
 * Spring Batch
 
+
 ![new spring starter project dependencies](./images/new spring starter project dependencies.bmp)
+
 
 ## Mise en place des ressources d'entree ici un fichier CSV
 
 Dossier main/ressources, faire nouveau fchier data.csv et le completer.
+
 
 ## Creation des objets metiers BankTransaction.java
 
