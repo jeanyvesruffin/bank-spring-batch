@@ -420,6 +420,12 @@ Nous mettons les dependences suivantes dans notre projet Spring Boot:
 
 ![new spring starter project dependencies](./images/new spring starter project dependencies.bmp)
 
+![test](./images/new spring starter project dependencies.bmp)
+
+![Conditional flow step](./images/conditional-flow-step.jpg)
+
+![Split low : Flows in Parallel](./images/flux-parallel.bmp)
+
 
 ## Mise en place des ressources d'entree ici un fichier CSV
 
