@@ -1,4 +1,4 @@
-package com.ruffin.bankspringbatch;
+package com.ruffin.bankspringbatch.batch;
 
 import java.text.SimpleDateFormat;
 

@@ -391,7 +391,7 @@ public CompositeItemProcessor compositeItemProcessor () {
 
 # Spring Batch Application
 
-On souhaite creer une application qui permet l'automatisation du traitement des transactions financieres dont les donnees sont fournis par un fichier texte au format CSV dont le format est le suivant:
+On souhaite creer une application qui permet l'automatisation du traitement des transactions financieres dont les donnees sont fournis par un fichier texte au format CSV dont le format est le suivant. L'operation convertira la date (String) et date.
 
 ```csv
 transaction_id,account_number,transaction_date,transaction_type,transaction_amount
@@ -575,6 +575,10 @@ inputFile=classpath:/data.csv
 spring.batch.job.enabled=false
 
 ```
+
+# Utilisation
+
+## RestController pour lancer un Job.
 
 
 
