@@ -1,5 +1,47 @@
 # Data batch processing Spring Batch
-<!-- TOC -->autoauto- [Data batch processing Spring Batch](#data-batch-processing-spring-batch)auto- [Introduction](#introduction)auto    - [Scenario d'utilisation](#scenario-dutilisation)auto    - [Cas utilisateurs cote metier (Uses case)](#cas-utilisateurs-cote-metier-uses-case)auto    - [Cas utilisateurs cote techniques (Uses caes)](#cas-utilisateurs-cote-techniques-uses-caes)auto    - [Architrecture de spring batch](#architrecture-de-spring-batch)auto    - [Concepts fondamentaux de Spring Batch](#concepts-fondamentaux-de-spring-batch)auto- [Job](#job)auto- [Step](#step)auto- [StepConfiguration : Chunk Oriented Processing (Traitement oriente bloc)](#stepconfiguration--chunk-oriented-processing-traitement-oriente-bloc)auto    - [Exemple de configuration d'un Job (avec un seul step)](#exemple-de-configuration-dun-job-avec-un-seul-step)auto- [Controle les flux des Steps](#controle-les-flux-des-steps)auto- [ItemReader](#itemreader)auto    - [Validation des donnees d'entree: validation basee sur les annotations:API (JSR-303)](#validation-des-donnees-dentree-validation-basee-sur-les-annotationsapi-jsr-303)auto- [ItemWriter](#itemwriter)auto- [ItemProcessor](#itemprocessor)auto    - [Enchainement d'ItemProcessors](#enchainement-ditemprocessors)auto- [ExecutionContext](#executioncontext)auto- [JobRepository](#jobrepository)auto- [Spring Batch Application](#spring-batch-application)auto- [Initialisation du projets](#initialisation-du-projets)auto    - [Creation projet Spring](#creation-projet-spring)auto    - [Mise en place des ressources d'entree ici un fichier CSV](#mise-en-place-des-ressources-dentree-ici-un-fichier-csv)auto    - [Creation des objets metiers BankTransaction.java](#creation-des-objets-metiers-banktransactionjava)auto    - [Creation de l'interface JPA Repository extends JpaRepository<BankTransaction, Long>](#creation-de-linterface-jpa-repository-extends-jparepositorybanktransaction-long)auto- [Configuration Spring Batch](#configuration-spring-batch)auto    - [Creation configuration d'un Job SpringBatchConfig.java](#creation-configuration-dun-job-springbatchconfigjava)auto- [Utilisation](#utilisation)auto    - [RestController pour lancer un Job.](#restcontroller-pour-lancer-un-job)auto    - [Test](#test)auto    - [Controle base de donnees H2](#controle-base-de-donnees-h2)auto- [Composite processor (Ajout d'un autre ItemProcessor)](#composite-processor-ajout-dun-autre-itemprocessor)auto    - [Creation ItemProcessor, BankTransactionItemAnalyticsProcessor](#creation-itemprocessor-banktransactionitemanalyticsprocessor)auto    - [Enchainement des processors.](#enchainement-des-processors)auto- [Conclusion](#conclusion)auto- [Erreurs](#erreurs)autoauto<!-- /TOC -->
+
+<!-- TOC -->
+
+- [Data batch processing Spring Batch](#data-batch-processing-spring-batch)
+- [Introduction](#introduction)
+    - [Scenario d'utilisation](#scenario-dutilisation)
+    - [Cas utilisateurs cote metier (Uses case)](#cas-utilisateurs-cote-metier-uses-case)
+    - [Cas utilisateurs cote techniques (Uses caes)](#cas-utilisateurs-cote-techniques-uses-caes)
+    - [Architrecture de spring batch](#architrecture-de-spring-batch)
+    - [Concepts fondamentaux de Spring Batch](#concepts-fondamentaux-de-spring-batch)
+- [Job](#job)
+- [Step](#step)
+- [StepConfiguration : Chunk Oriented Processing (Traitement oriente bloc)](#stepconfiguration--chunk-oriented-processing-traitement-oriente-bloc)
+    - [Exemple de configuration d'un Job (avec un seul step)](#exemple-de-configuration-dun-job-avec-un-seul-step)
+- [Controle les flux des Steps](#controle-les-flux-des-steps)
+- [ItemReader](#itemreader)
+    - [Validation des donnees d'entree: validation basee sur les annotations:API (JSR-303)](#validation-des-donnees-dentree-validation-basee-sur-les-annotationsapi-jsr-303)
+- [ItemWriter](#itemwriter)
+- [ItemProcessor](#itemprocessor)
+    - [Enchainement d'ItemProcessors](#enchainement-ditemprocessors)
+- [ExecutionContext](#executioncontext)
+- [JobRepository](#jobrepository)
+- [Spring Batch Application](#spring-batch-application)
+- [Initialisation du projets](#initialisation-du-projets)
+    - [Creation projet Spring](#creation-projet-spring)
+    - [Mise en place des ressources d'entree ici un fichier CSV](#mise-en-place-des-ressources-dentree-ici-un-fichier-csv)
+    - [Creation des objets metiers BankTransaction.java](#creation-des-objets-metiers-banktransactionjava)
+    - [Creation de l'interface JPA Repository extends JpaRepository<BankTransaction, Long>](#creation-de-linterface-jpa-repository-extends-jparepositorybanktransaction-long)
+- [Configuration Spring Batch](#configuration-spring-batch)
+    - [Creation configuration d'un Job SpringBatchConfig.java](#creation-configuration-dun-job-springbatchconfigjava)
+- [Utilisation](#utilisation)
+    - [RestController pour lancer un Job.](#restcontroller-pour-lancer-un-job)
+    - [Test](#test)
+    - [Controle base de donnees H2](#controle-base-de-donnees-h2)
+- [Composite processor (Ajout d'un autre ItemProcessor)](#composite-processor-ajout-dun-autre-itemprocessor)
+    - [Creation ItemProcessor, BankTransactionItemAnalyticsProcessor](#creation-itemprocessor-banktransactionitemanalyticsprocessor)
+    - [Enchainement des processors.](#enchainement-des-processors)
+- [Conclusion](#conclusion)
+- [Erreurs](#erreurs)
+
+<!-- /TOC -->
+
+
 
 # Introduction
 
