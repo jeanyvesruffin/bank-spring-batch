@@ -523,7 +523,58 @@ public LineMapper<BankTransaction> lineMapper() {
 
 5 . **Definition des objets ItemProcessor**
 
+Il est recommande de creer une nouvelle classe.
 
+BankTransactionProcessor, package com.ruffin.bankspringbatch.
+
+```java
+@Component
+public class BankTransactionItemProcessor implements ItemProcessor<BankTransaction, BankTransaction> {
+
+	private SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy-HH:mm");
+
+	@Override
+	public BankTransaction process(BankTransaction bankTransaction) throws Exception {
+		bankTransaction.setTransactionDate(dateFormat.parse(bankTransaction.getStrTransactionDate()));
+		return bankTransaction;
+	}
+
+}
+```
+
+6 . **Definition de ItemWriter**
+
+Il est recommande de creer une nouvelle classe.
+
+BankTransactionItemWriter, package com.ruffin.bankspringbatch.
+
+```java
+@Component
+public class BankTransactionItemWriter implements ItemWriter<BankTransaction> {
+	@Autowired
+	private BankTransactionRepository bankTransactionRepository;
+
+	@Override
+	public void write(List<? extends BankTransaction> itemsList) throws Exception {
+		// enregistrement en base de donnee
+		bankTransactionRepository.saveAll(itemsList);
+	}
+}
+
+```
+
+7 . **application.properties**
+
+Dans le cas present, si on execute l'application, le job s'executera automatiquement. Nous desirons ajouter une propriete pour gerer cette execution car a terme cela sera gere par l'api rest (rest controller action pour demarrer le job).
+Pour cela, dans le fichier application.properties indiquer:
+
+application.properties
+
+```properties
+inputFile=classpath:/data.csv
+spring.batch.job.enabled=false
+
+```
 
 
 

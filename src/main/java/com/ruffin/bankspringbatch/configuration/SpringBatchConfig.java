@@ -66,5 +66,5 @@ public class SpringBatchConfig {
 		lineMapper.setFieldSetMapper(fieldSetMapper);
 		return lineMapper;
 	}
-
+	
 }
