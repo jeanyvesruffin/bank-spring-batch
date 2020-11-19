@@ -464,6 +464,7 @@ public class SpringBatchConfig {
 3 . **Defnition de la methode retournant un job.**
 
 ```java
+@Bean
 public Job bankJob() {
 	Step step1 = stepBuilderFactory.get("step-load-data")
 			.<BankTransaction,BankTransaction>chunk(100)
@@ -580,21 +581,178 @@ spring.batch.job.enabled=false
 
 ## RestController pour lancer un Job.
 
+JobRestController, package com.ruffin.bankspringbatch.controller.
+
+
+```java
+@RestController
+public class JobRestController {
+	@Autowired
+	private JobLauncher jobLauncher;
+
+	@Autowired
+	private Job job;
+
+	@GetMapping("/startJob")
+	public BatchStatus load() throws Exception {
+		Map<String, JobParameter> params = new HashMap<>();
+		params.put("time", new JobParameter(System.currentTimeMillis()));
+		JobParameters jobParameters = new JobParameters(params);
+		JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+		// Affichage de la progression de l'execution
+		while (jobExecution.isRunning()) {
+			System.out.println(".......");
+		}
+		return jobExecution.getStatus();
+	}
+}
+```
+
+## Test 
+
+Executer l'application.
+
+Puis indiquer dans votre navigateur: [http://localhost:8080/startJob](http://localhost:8080/startJob)
+
+
+## Controle base de donnees H2
+
+Apres avoir execute le job.
+
+Consulter la base de donneees H2 grace a DevTools: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+
+![console H2](./images/h2-console.bmp)
+
+# Composite processor (Ajout d'un autre ItemProcessor)
+
+Celui-ci, permettra de calculer le total des debits et le total des credits.
+
+
+## Creation ItemProcessor, BankTransactionItemAnalyticsProcessor
+
+BankTransactionItemAnalyticsProcessor, package com.ruffin.bankspringbatch.batch.
+
+```java
+@Component
+public class BankTransactionItemAnalyticsProcessor implements ItemProcessor<BankTransaction, BankTransaction> {
+
+	@Getter
+	private double totalDebit;
+	@Getter
+	private double totalCredit;
+
+	@Override
+	public BankTransaction process(BankTransaction bankTransaction) throws Exception {
+		if (bankTransaction.getTransactionType().equals("D"))
+			totalDebit += bankTransaction.getAmount();
+		else if (bankTransaction.getTransactionType().equals("C"))
+			totalCredit += bankTransaction.getAmount();
+		return bankTransaction;
+	}
+}
+```
+
+Maintenant, nous avons 2 processors il s'agit de les enchainer a l'aide d'un pipe.
+
+## Enchainement des processors.
+
+1 . Modification du fichier SpringBatchConfig, package com.ruffin.bankspringbatch.configuration.
+
+Lors de la creation de la configuration du job. Au lieu d'avoir un processor (.processor(bankTransactionItemProcessor)) nous appellerons une methode nous retournant une liste d'item processor.
 
 
 
+```java
+@Bean
+public Job bankJob() {
+	Step step1 = stepBuilderFactory.get("step-load-data").<BankTransaction, BankTransaction>chunk(100)
+			.reader(bankTransactionItemReader).processor(compositeItemProcessor())
+			.writer(bankTransactionItemWriter).build();
+
+	return jobBuilderFactory.get("bank-data-load-job").start(step1).build();
+};
+``` 
+
+2. Modification du fichier BankTransactionItemProcessor, package com.ruffin.bankspringbatch.batch;
+
+Necessaire pour la creation du "pipe" composite processor (methode CompositeItemProcessor.setDelegate)
+
+Premierement nous retirons l'annotation @Component des fichiers BankTransactionItemProcessor et BankTransactionItemAnalyticsProcessor, car nous les instancierons directement dans la classe de configuration.
+
+Exemple l'equivalent de @Component de la classe BankTransactionItemProcessor correspond dans le fichier SpringBatchConfig à :
+
+```java
+@Bean
+ItemProcessor<BankTransaction, BankTransaction> itemProcessor1(){
+	return new BankTransactionItemProcessor();
+	}
+```
+
+Notre classe SpringBatchConfig devient alors:
+
+```java
+@Bean
+BankTransactionItemProcessor itemProcessor1(){
+	return new BankTransactionItemProcessor();
+}
+
+@Bean
+BankTransactionItemAnalyticsProcessor itemProcessor2(){
+	return new BankTransactionItemAnalyticsProcessor();
+}
+
+@Bean
+public ItemProcessor<BankTransaction, BankTransaction> compositeItemProcessor() {
+	List<ItemProcessor<BankTransaction,BankTransaction>> itemProcessors = new ArrayList<>();
+	itemProcessors.add(itemProcessor1());
+	itemProcessors.add(itemProcessor2());
+	CompositeItemProcessor<BankTransaction, BankTransaction> compositeItemProcessor = new CompositeItemProcessor<>();
+	compositeItemProcessor.setDelegates(itemProcessors);
+	return compositeItemProcessor;
+}
+```
+
+Ajout d'une methode analytic pour recuperer les resultats des calcules, lors de l'appel de l'url "/analytics".
+
+Dans JobRestController, package com.ruffin.bankspringbatch.controller.
+
+```java
+@GetMapping("/analytics")
+public Map<String, Double> analytics(){
+	Map<String, Double> map = new HashMap<>();
+	map.put("totalCredits ", analyticsProcessor.getTotalCredit());
+	map.put("totalDebits ", analyticsProcessor.getTotalDebit());
+	return map;
+}
+```
 
 
+Notre batch prendra en entree un fichier CVS, convertira les dates au format date, procedera au calcul des totaux de debits et credits, puis ecrira ces donnees en base de donnee. Nous pourrons recuperer l'etat des resultats des calcules en faisant appel a l'url "/analytics"
+
+1 . Executer votre application
+
+2 . Tapper dans votre navigateur: [http://localhost:8080/startJob](http://localhost:8080/startJob)
+
+3 . Controle base de donnees: [http://localhost:8080/h2-console](http://localhost:8080/h2-console)
+
+4 . Controler les resultats mis dans les variables total credit et debit : [http://localhost:8080/analytics](http://localhost:8080/analytics)
+
+# Conclusion
+
+Attention Spring Batch est puissant mais ne pourrait etre utilise dans un ecosysteme qui requiere de la scalabilite ou des traitements distribues.
+
+Voir pour la suite Spark, KafKa
 
 
+# Erreurs
 
+* Lombok ne genere pas les getters et setters.
 
+solve
 
-
-
-
-
-
+1 .Go where you Lombok jar is (e.g. (e.g. you can find in ~/.m2/repository/org/projectlombok/lombok/1.16.10/lombok-1.16.10.jar), run it (Example: java -jar lombok-1.16.10.jar). A window should appear, browse to your eclipse.exe location.
+2 .Click on install.
+3 .Launch Eclipse, update project configuration on all projects and voila.
 
 
 
